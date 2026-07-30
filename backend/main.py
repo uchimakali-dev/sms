@@ -47,7 +47,7 @@ def get_db():
 
 @app.get("/")
 def home():
-    return {"message":"welcome to the student management API"}
+    return {"message":"welcome the student management API"}
 
 
 @app.post("/add_student")
