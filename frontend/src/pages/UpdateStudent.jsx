@@ -37,7 +37,7 @@ export default function UpdateStudent({ students, onUpdate }) {
         </div>
         <h2 className="text-lg font-bold text-slate-100 mb-1">Student Not Found</h2>
         <p className="text-slate-400 text-sm mb-6">
-          The record you are trying to edit does not exist.
+          The record you are trying to edit does not exist
         </p>
         <Link 
           to="/" 

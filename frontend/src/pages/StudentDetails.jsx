@@ -31,7 +31,7 @@ export default function StudentDetails({ students, onDelete }) {
   return (
     <div className="max-w-xl mx-auto space-y-6">
       
-      {/* Top Back Navigation Link */}
+      {/* Top Back Navigation Li*/}
       <Link 
         to="/" 
         className="inline-flex items-center text-xs mt-6 font-semibold text-slate-400 hover:text-emerald-400 transition-colors group"

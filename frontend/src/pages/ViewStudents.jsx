@@ -12,7 +12,7 @@ export default function ViewStudents({ onDelete }) {
   const [search, setSearchTerm] = useState('');
   const [sort, setSortBy] = useState('name');
 
-  // --- Pagination State ---
+  // --- Pagination State -
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
 

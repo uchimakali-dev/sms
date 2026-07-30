@@ -100,7 +100,7 @@ export default function App() {
         throw new Error(`Failed to delete student. Status: ${response.status}`);
       }
 
-      // Update state locally so the deleted student instantly disappears from the UI
+      // Update state locally so the delestudent instantly disappears from the UI
       setStudents((prevStudents) => prevStudents.filter((s) => s.id !== id));
       
     } catch (error) {

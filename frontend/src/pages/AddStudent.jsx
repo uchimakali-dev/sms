@@ -27,7 +27,7 @@ export default function AddStudent() {
         },
         body: JSON.stringify({
           ...form,
-          age: parseInt(form.age, 10) // Convert string input to number
+          age: parseInt(form.age, 10) // Convert g input to number
         }),
       });
 
