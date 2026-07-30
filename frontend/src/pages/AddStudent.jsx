@@ -6,7 +6,7 @@ export default function AddStudent() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const API_BASE_URL = "https://sms-eta-eosin.vercel.app";
+  const API_BASE_URL = "https://sms-mxnw.onrender.com";
 
   const [form, setForm] = useState({
     student_name: '',

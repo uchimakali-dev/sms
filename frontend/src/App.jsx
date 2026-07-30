@@ -11,7 +11,7 @@ export default function App() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const API_BASE_URL = "https://sms-eta-eosin.vercel.app";
+  const API_BASE_URL = "https://sms-mxnw.onrender.com";
 
   useEffect(() => {
     // Perform the GET request
