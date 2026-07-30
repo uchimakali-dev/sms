@@ -35,7 +35,7 @@ export default function UpdateStudent({ students, onUpdate }) {
   const studentExists = students.some((s) => s.id === parseInt(id, 10));
   if (students.length > 0 && !studentExists) {
     return (
-      <div className="w-full min-h-[50vh] flex items-center justify-center p-4">
+      <div className="w-full min-h-[50vh] pt-10 md:flex items-center justify-center p-4">
         <div className="w-full max-w-md my-8 text-center p-6 sm:p-8 bg-slate-900/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-800 shadow-2xl">
           <div className="w-12 h-12 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shrink-0">
             <AlertCircle className="w-6 h-6" />
@@ -56,7 +56,7 @@ export default function UpdateStudent({ students, onUpdate }) {
   }
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
+    <div className="w-full min-h-screen pt-20 md:flex bg-slate-950 items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
       
       {/* Background Glows */}
       <div className="absolute top-0 right-0 w-64 sm:w-80 h-64 sm:h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
