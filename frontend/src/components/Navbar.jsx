@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Users, UserPlus, GraduationCap, Sparkles } from 'lucide-react';
+import { Users, UserPlus, GraduationCap, Sparkles, Menu, X } from 'lucide-react';
 
 export default function Navbar() {
   const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
@@ -25,8 +26,8 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Navigation Links */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        {/* Desktop Navigation Links */}
+        <div className="hidden md:flex items-center gap-2 sm:gap-3">
           <Link
             to="/"
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
@@ -52,7 +53,47 @@ export default function Navbar() {
           </Link>
         </div>
 
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="md:hidden p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 rounded-xl border border-slate-800 focus:outline-none transition-colors"
+          aria-label="Toggle Navigation Menu"
+        >
+          {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+
       </div>
+
+      {/* Mobile Dropdown Menu */}
+      {isOpen && (
+        <div className="md:hidden border-t border-slate-800/80 bg-slate-900/95 backdrop-blur-xl px-4 py-3 space-y-2">
+          <Link
+            to="/"
+            onClick={() => setIsOpen(false)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+              isActive('/') 
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10' 
+                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent'
+            }`}
+          >
+            <Users className="w-4 h-4" /> 
+            <span>View All</span>
+          </Link>
+
+          <Link
+            to="/add"
+            onClick={() => setIsOpen(false)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+              isActive('/add') 
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10' 
+                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent'
+            }`}
+          >
+            <UserPlus className="w-4 h-4" /> 
+            <span>Add Student</span>
+          </Link>
+        </div>
+      )}
     </nav>
   );
 }

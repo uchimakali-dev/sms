@@ -12,7 +12,7 @@ export default function ViewStudents({ onDelete }) {
   const [search, setSearchTerm] = useState('');
   const [sort, setSortBy] = useState('name');
 
-  // --- Pagination State -
+  // --- Pagination State ---
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
 
@@ -59,20 +59,20 @@ export default function ViewStudents({ onDelete }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 sm:p-8 relative overflow-hidden text-slate-100">
+    <div className="min-h-screen bg-slate-950 p-4 sm:p-6 md:p-8 relative overflow-hidden text-slate-100">
       
       {/* Background Radial Glow Effects */}
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto space-y-6 relative z-10">
+      <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 relative z-10">
         
         {/* --- Header & Action Section --- */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/80 backdrop-blur-xl p-6 rounded-3xl border border-slate-800 shadow-xl shadow-emerald-950/10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/80 backdrop-blur-xl p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl shadow-emerald-950/10">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-white tracking-tight">Student Directory</h1>
-              <Sparkles className="w-5 h-5 text-emerald-400" />
+              <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Student Directory</h1>
+              <Sparkles className="w-5 h-5 text-emerald-400 shrink-0" />
             </div>
             <p className="text-slate-400 text-xs sm:text-sm mt-0.5">Manage and view all registered students</p>
           </div>
@@ -86,7 +86,7 @@ export default function ViewStudents({ onDelete }) {
         </div>
 
         {/* --- Search and Sort Controls --- */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-900/80 backdrop-blur-xl p-4 rounded-2xl border border-slate-800 shadow-lg">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-center bg-slate-900/80 backdrop-blur-xl p-4 rounded-2xl border border-slate-800 shadow-lg">
           
           {/* Search Input */}
           <div className="relative w-full sm:w-80 group">
@@ -101,15 +101,15 @@ export default function ViewStudents({ onDelete }) {
           </div>
 
           {/* Sort Controls */}
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400 shrink-0">
               <ArrowUpDown className="w-3.5 h-3.5 text-emerald-400" />
               <span>Sort by:</span>
             </div>
             <select
               value={sort}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full appearance-none pl-10 pr-10 py-2.5 bg-slate-950/60 border border-slate-800/80 rounded-xl text-slate-200 text-sm outline-none hover:border-slate-700 hover:bg-slate-900/60 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition duration-200 cursor-pointer shadow-inner"
+              className="w-full sm:w-auto appearance-none pl-4 sm:pl-10 pr-10 py-2.5 bg-slate-950/60 border border-slate-800/80 rounded-xl text-slate-200 text-sm outline-none hover:border-slate-700 hover:bg-slate-900/60 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition duration-200 cursor-pointer shadow-inner"
             >
               <option value="name" className="bg-slate-900 text-slate-100 py-2">
                 Name
@@ -124,8 +124,8 @@ export default function ViewStudents({ onDelete }) {
           </div>
         </div>
 
-        {/* --- Main Table Container --- */}
-        <div className="bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-emerald-950/20 border border-slate-800 overflow-hidden">
+        {/* --- Main Data Container --- */}
+        <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl shadow-emerald-950/20 border border-slate-800 overflow-hidden">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 text-slate-400 gap-3">
               <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
@@ -146,7 +146,8 @@ export default function ViewStudents({ onDelete }) {
             </div>
           ) : (
             <>
-              <div className="overflow-x-auto">
+              {/* Desktop & Tablet Table View */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-slate-800/50 border-b border-slate-800 text-slate-400 text-xs font-semibold uppercase tracking-wider">
@@ -206,9 +207,52 @@ export default function ViewStudents({ onDelete }) {
                 </table>
               </div>
 
+              {/* Mobile Card Layout */}
+              <div className="block md:hidden divide-y divide-slate-800/60">
+                {currentStudents.map((student) => (
+                  <div key={student.id} className="p-4 space-y-3 bg-slate-900/40">
+                    <div className="flex justify-between items-start gap-2">
+                      <div>
+                        <h3 className="font-semibold text-white text-base">{student.student_name}</h3>
+                        <p className="text-xs text-slate-400 break-all">{student.email}</p>
+                      </div>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wide shrink-0">
+                        {student.department}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-800/40">
+                      <Link
+                        to={`/student/${student.id}`}
+                        className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-xl transition-colors flex items-center gap-1 text-xs"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Link>
+                      
+                      <Link
+                        to={`/update/${student.id}`}
+                        className="p-2 text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 rounded-xl transition-colors flex items-center gap-1 text-xs"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Link>
+
+                      <button
+                        onClick={() => {
+                          onDelete(student.id);
+                          setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
+                        }}
+                        className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors flex items-center gap-1 text-xs"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
               {/* --- Pagination Footer Controls --- */}
-              <div className="px-6 py-4 bg-slate-950/40 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-                <p className="text-slate-400">
+              <div className="px-4 sm:px-6 py-4 bg-slate-950/40 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+                <p className="text-slate-400 text-center sm:text-left">
                   Showing <span className="font-semibold text-white">{indexOfFirstStudent + 1}</span> to{' '}
                   <span className="font-semibold text-white">
                     {Math.min(indexOfLastStudent, students.length)}
@@ -225,12 +269,12 @@ export default function ViewStudents({ onDelete }) {
                     <ChevronLeft className="w-4 h-4" />
                   </button>
 
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 overflow-x-auto  sm:max-w-none py-1">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
                       <button
                         key={number}
                         onClick={() => setCurrentPage(number)}
-                        className={`w-8 h-8 rounded-xl text-xs font-semibold transition border ${
+                        className={`w-8 h-8 rounded-xl text-xs font-semibold transition border shrink-0 ${
                           currentPage === number
                             ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                             : 'bg-slate-900/50 text-slate-400 hover:bg-slate-800 border-slate-800'

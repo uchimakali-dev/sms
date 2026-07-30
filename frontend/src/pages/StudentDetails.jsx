@@ -1,114 +1,141 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2, Mail, Building2, Sparkles, User, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Mail, Building2, Sparkles, User, AlertCircle, Hash } from 'lucide-react';
 
 export default function StudentDetails({ students, onDelete }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const student = students.find((s) => s.id === parseInt(id));
+  const student = students.find((s) => s.id === parseInt(id, 10));
 
   // Not Found State
   if (!student) {
     return (
-      <div className="max-w-md mx-auto my-2 text-center p-8 bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-slate-800 shadow-2xl">
-        <div className="w-12 h-12 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <AlertCircle className="w-6 h-6" />
+      <div className="w-full min-h-[50vh] flex items-center justify-center p-4">
+        <div className="w-full max-w-md my-8 text-center p-6 sm:p-8 bg-slate-900/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-800 shadow-2xl">
+          <div className="w-12 h-12 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shrink-0">
+            <AlertCircle className="w-6 h-6" />
+          </div>
+          <h2 className="text-lg font-bold text-slate-100 mb-1">Student Not Found</h2>
+          <p className="text-slate-400 text-xs sm:text-sm mb-6">
+            The student record you are looking for does not exist or has been removed.
+          </p>
+          <Link 
+            to="/" 
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-sm transition border border-slate-700 cursor-pointer"
+          >
+            <ArrowLeft className="w-4 h-4" /> Return to Directory
+          </Link>
         </div>
-        <h2 className="text-lg font-bold text-slate-100 mb-1">Student Not Found</h2>
-        <p className="text-slate-400 text-sm mb-6">
-          The student record you are looking for does not exist or has been removed.
-        </p>
-        <Link 
-          to="/" 
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-sm transition border border-slate-700"
-        >
-          <ArrowLeft className="w-4 h-4" /> Return to Directory
-        </Link>
       </div>
     );
   }
 
   return (
-    <div className="max-w-xl mx-auto space-y-6">
+    <div className="w-full min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
       
-      {/* Top Back Navigation Li*/}
-      <Link 
-        to="/" 
-        className="inline-flex items-center text-xs mt-6 font-semibold text-slate-400 hover:text-emerald-400 transition-colors group"
-      >
-        <ArrowLeft className="w-4 h-4 mr-1.5 transition-transform group-hover:-translate-x-1" /> 
-        Back to Directory
-      </Link>
+      {/* Background Glow */}
+      <div className="absolute top-0 right-0 w-64 sm:w-80 h-64 sm:h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Main Glass Profile Card */}
-      <div className="bg-slate-900/60 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-slate-800/80 shadow-2xl shadow-emerald-950/20 relative overflow-hidden">
+      <div className="w-full max-w-xl space-y-4 sm:space-y-6 relative z-10 my-auto">
         
-        {/* Glow Accent inside Card */}
-        <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
+        {/* Top Back Navigation Link */}
+        <Link 
+          to="/" 
+          className="inline-flex items-center text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors group cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5 transition-transform group-hover:-translate-x-1" /> 
+          Back to Directory
+        </Link>
 
-        {/* Student Avatar & Basic Info */}
-        <div className="flex items-center gap-4 mb-8 relative z-10">
-          <div className="w-16 h-16 bg-linear-to-tr from-emerald-600 via-teal-500 to-cyan-500 rounded-2xl flex items-center justify-center text-slate-950 font-extrabold text-2xl shadow-lg shadow-emerald-500/20 shrink-0">
-            <User className="w-8 h-8 text-slate-950" />
-          </div>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-white tracking-tight">{student.student_name}</h1>
-              <Sparkles className="w-4 h-4 text-emerald-400" />
-            </div>
-            <span className="inline-block text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-              ID #{student.id}
-            </span>
-          </div>
-        </div>
-
-        {/* Detailed Attribute Blocks */}
-        <div className="space-y-3 my-6 pt-6 border-t border-slate-800/80">
+        {/* Main Glass Profile Card */}
+        <div className="bg-slate-900/60 backdrop-blur-xl p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl shadow-emerald-950/20 relative overflow-hidden">
           
-          {/* Email Card */}
-          <div className="flex items-center gap-4 p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-2xl border border-slate-800/60 group">
-            <div className="p-2.5 bg-slate-900 rounded-xl text-emerald-400 border border-slate-800 group-hover:border-emerald-500/30 transition">
-              <Mail className="w-5 h-5" />
+          {/* Student Avatar & Basic Info */}
+          <div className="flex items-center gap-3.5 sm:gap-4 mb-6 sm:mb-8 relative z-10">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-linear-to-tr from-emerald-600 via-teal-500 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-slate-950 font-extrabold text-2xl shadow-lg shadow-emerald-500/20 shrink-0">
+              <User className="w-7 h-7 sm:w-8 sm:h-8 text-slate-950" />
             </div>
-            <div className="overflow-hidden">
-              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Email Address</p>
-              <p className="text-slate-200 font-medium text-sm mt-0.5 truncate">{student.email}</p>
-            </div>
-          </div>
-
-          {/* Department / Course Card */}
-          <div className="flex items-center gap-4 p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-2xl border border-slate-800/60 group">
-            <div className="p-2.5 bg-slate-900 rounded-xl text-teal-400 border border-slate-800 group-hover:border-teal-500/30 transition">
-              <Building2 className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Department / Course</p>
-              <p className="text-slate-200 font-medium text-sm mt-0.5 uppercase tracking-wide">{student.department}</p>
+            <div className="space-y-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight truncate">
+                  {student.student_name}
+                </h1>
+                <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+              </div>
+              <span className="inline-block text-[10px] sm:text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                ID #{student.id}
+              </span>
             </div>
           </div>
 
+          {/* Detailed Attribute Blocks */}
+          <div className="space-y-3 my-4 sm:my-6 pt-4 sm:pt-6 border-t border-slate-800/80">
+            
+            {/* Email Card */}
+            <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-xl sm:rounded-2xl border border-slate-800/60 group">
+              <div className="p-2.5 bg-slate-900 rounded-xl text-emerald-400 border border-slate-800 group-hover:border-emerald-500/30 transition shrink-0">
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] sm:text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Email Address</p>
+                <p className="text-slate-200 font-medium text-xs sm:text-sm mt-0.5 truncate">{student.email}</p>
+              </div>
+            </div>
+
+            {/* Grid Layout for Department and Age */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              
+              {/* Department / Course Card */}
+              <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-xl sm:rounded-2xl border border-slate-800/60 group">
+                <div className="p-2.5 bg-slate-900 rounded-xl text-teal-400 border border-slate-800 group-hover:border-teal-500/30 transition shrink-0">
+                  <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Department</p>
+                  <p className="text-slate-200 font-medium text-xs sm:text-sm mt-0.5 uppercase tracking-wide truncate">
+                    {student.department}
+                  </p>
+                </div>
+              </div>
+
+              {/* Age Card */}
+              <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-xl sm:rounded-2xl border border-slate-800/60 group">
+                <div className="p-2.5 bg-slate-900 rounded-xl text-cyan-400 border border-slate-800 group-hover:border-cyan-500/30 transition shrink-0">
+                  <Hash className="w-4 h-4 sm:w-5 sm:h-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Age</p>
+                  <p className="text-slate-200 font-medium text-xs sm:text-sm mt-0.5">
+                    {student.age || 'N/A'}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Action Controls */}
+          <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 pt-4 border-t border-slate-800/80 mt-5 sm:mt-6">
+            <Link
+              to={`/update/${student.id}`}
+              className="w-full sm:flex-1 py-2.5 sm:py-3 bg-slate-800/90 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold rounded-xl sm:rounded-2xl transition duration-200 border border-slate-700/80 text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+            >
+              <Edit className="w-4 h-4 text-amber-400" /> Edit Profile
+            </Link>
+
+            <button
+              onClick={() => {
+                onDelete(student.id);
+                navigate("/");
+              }}
+              className="w-full sm:w-auto px-5 py-2.5 sm:py-3 bg-rose-950/30 hover:bg-rose-900/50 text-rose-300 font-semibold rounded-xl sm:rounded-2xl transition duration-200 border border-rose-800/40 text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+            >
+              <Trash2 className="w-4 h-4 text-rose-400" /> Delete
+            </button>
+          </div>
+
         </div>
-
-        {/* Action Controls */}
-        <div className="flex gap-3 pt-4 border-t border-slate-800/80">
-          <Link
-            to={`/update/${student.id}`}
-            className="flex-1 py-3 bg-slate-800/90 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold rounded-2xl transition duration-200 border border-slate-700/80 text-sm flex items-center justify-center gap-2 shadow-sm"
-          >
-            <Edit className="w-4 h-4 text-amber-400" /> Edit Profile
-          </Link>
-
-          <button
-            onClick={() => {
-              onDelete(student.id);
-              navigate("/");
-            }}
-            className="px-5 py-3 bg-rose-950/30 hover:bg-rose-900/50 text-rose-300 font-semibold rounded-2xl transition duration-200 border border-rose-800/40 text-sm flex items-center justify-center gap-2 shadow-sm"
-          >
-            <Trash2 className="w-4 h-4 text-rose-400" /> Delete
-          </button>
-        </div>
-
       </div>
     </div>
   );
