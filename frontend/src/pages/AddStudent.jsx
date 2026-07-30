@@ -48,7 +48,7 @@ export default function AddStudent() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-slate-950 pt-20 md:flex items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
+    <div className="min-h-screen w-full bg-slate-950 pt-10 md:flex items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
       
       {/* Background Radial Glow Effects */}
       <div className="absolute -top-32 -left-32 w-64 h-64 sm:w-80 sm:h-80 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />

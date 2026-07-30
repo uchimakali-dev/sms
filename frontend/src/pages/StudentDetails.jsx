@@ -31,7 +31,7 @@ export default function StudentDetails({ students, onDelete }) {
   }
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
+    <div className="w-full min-h-screen bg-slate-950 pt-10 md:flex items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
       
       {/* Background Glow */}
       <div className="absolute top-0 right-0 w-64 sm:w-80 h-64 sm:h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />

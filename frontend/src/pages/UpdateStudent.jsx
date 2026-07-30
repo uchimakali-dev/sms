@@ -56,7 +56,7 @@ export default function UpdateStudent({ students, onUpdate }) {
   }
 
   return (
-    <div className="w-full min-h-screen pt-20 md:flex bg-slate-950 items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
+    <div className="w-full min-h-screen pt-10 md:flex bg-slate-950 items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
       
       {/* Background Glows */}
       <div className="absolute top-0 right-0 w-64 sm:w-80 h-64 sm:h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
