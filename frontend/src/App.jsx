@@ -6,6 +6,23 @@ import AddStudent from "./pages/AddStudent";
 import UpdateStudent from "./pages/UpdateStudent";
 import StudentDetails from "./pages/StudentDetails";
 import { Loader2, Sparkles } from "lucide-react";
+import LoginPage from "./pages/Login";
+
+// Protected Route Guard Component
+const ProtectedRoute = ({ children }) => {
+  const isAuthenticated = localStorage.getItem("token") || localStorage.getItem("user");
+
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
+};
 
 export default function App() {
   const [students, setStudents] = useState([]);
@@ -112,40 +129,56 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
-        <Navbar />
+        
         <main className="flex-1 w-full">
           <Routes>
+            <Route path="/" element={<LoginPage />} />
+            
             <Route
-              path="/"
+              path="/viewstudents"
               element={
-                <ViewStudents
-                  students={students}
-                  onDelete={handleDelete}
-                />
+                <ProtectedRoute>
+                  <ViewStudents
+                    students={students}
+                    onDelete={handleDelete}
+                  />
+                </ProtectedRoute>
               }
             />
+            
             <Route
               path="/add"
-              element={<AddStudent onAdd={handleAddStudent} />}
+              element={
+                <ProtectedRoute>
+                  <AddStudent onAdd={handleAddStudent} />
+                </ProtectedRoute>
+              }
             />
+            
             <Route
               path="/update/:id"
               element={
-                <UpdateStudent
-                  students={students}
-                  onUpdate={handleUpdateStudent}
-                />
+                <ProtectedRoute>
+                  <UpdateStudent
+                    students={students}
+                    onUpdate={handleUpdateStudent}
+                  />
+                </ProtectedRoute>
               }
             />
+            
             <Route
               path="/student/:id"
               element={
-                <StudentDetails
-                  students={students}
-                  onDelete={handleDelete}
-                />
+                <ProtectedRoute>
+                  <StudentDetails
+                    students={students}
+                    onDelete={handleDelete}
+                  />
+                </ProtectedRoute>
               }
             />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>

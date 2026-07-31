@@ -45,7 +45,7 @@ export default function UpdateStudent({ students, onUpdate }) {
             The record you are trying to edit does not exist
           </p>
           <Link 
-            to="/" 
+            to="/viewstudents" 
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-sm transition border border-slate-700 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" /> Return to Directory
@@ -65,7 +65,7 @@ export default function UpdateStudent({ students, onUpdate }) {
         
         {/* Top Back Navigation Link */}
         <Link 
-          to="/" 
+          to="/viewstudents" 
           className="inline-flex items-center text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors group cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 mr-1.5 transition-transform group-hover:-translate-x-1" /> 
@@ -157,7 +157,7 @@ export default function UpdateStudent({ students, onUpdate }) {
             <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 pt-4 sm:pt-6 border-t border-slate-800/80 mt-5 sm:mt-6">
               <button
                 type="button"
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/viewstudents')}
                 className="w-full sm:flex-1 py-2.5 sm:py-3 bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 font-semibold rounded-xl sm:rounded-2xl transition duration-200 border border-slate-700/80 text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer"
               >
                 <X className="w-4 h-4 text-slate-400" /> Cancel

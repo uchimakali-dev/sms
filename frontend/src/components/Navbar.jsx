@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Users, UserPlus, GraduationCap, Sparkles, Menu, X } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Users, UserPlus, GraduationCap, Sparkles, Menu, X, LogOut } from 'lucide-react';
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    // Clear user auth session/tokens if stored in localStorage or sessionStorage
+    localStorage.removeItem('token'); 
+    localStorage.removeItem('user');
+    
+    // Close mobile menu if open and navigate to login
+    setIsOpen(false);
+    navigate('/');
+  };
 
   return (
     <nav className="bg-slate-900/80 backdrop-blur-md text-white border-b border-slate-800/80 sticky top-0 z-50 transition-all duration-200">
@@ -29,9 +40,9 @@ export default function Navbar() {
         {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center gap-2 sm:gap-3">
           <Link
-            to="/"
+            to="/viewstudents"
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
-              isActive('/') 
+              isActive('/viewstudents') 
                 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10' 
                 : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent'
             }`}
@@ -51,6 +62,15 @@ export default function Navbar() {
             <UserPlus className="w-4 h-4" /> 
             <span>Add Student</span>
           </Link>
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/30 transition-all duration-200 cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Logout</span>
+          </button>
         </div>
 
         {/* Mobile Hamburger Button */}
@@ -92,6 +112,15 @@ export default function Navbar() {
             <UserPlus className="w-4 h-4" /> 
             <span>Add Student</span>
           </Link>
+
+          {/* Mobile Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/30 transition-all duration-200 cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Logout</span>
+          </button>
         </div>
       )}
     </nav>

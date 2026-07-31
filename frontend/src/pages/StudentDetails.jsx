@@ -20,7 +20,7 @@ export default function StudentDetails({ students, onDelete }) {
             The student record you are looking for does not exist or has been removed.
           </p>
           <Link 
-            to="/" 
+            to="/viewstudents" 
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-sm transition border border-slate-700 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" /> Return to Directory
@@ -40,7 +40,7 @@ export default function StudentDetails({ students, onDelete }) {
         
         {/* Top Back Navigation Link */}
         <Link 
-          to="/" 
+          to="/viewstudents" 
           className="inline-flex items-center text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors group cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 mr-1.5 transition-transform group-hover:-translate-x-1" /> 
@@ -127,7 +127,7 @@ export default function StudentDetails({ students, onDelete }) {
             <button
               onClick={() => {
                 onDelete(student.id);
-                navigate("/");
+                navigate("/viewstudents");
               }}
               className="w-full sm:w-auto px-5 py-2.5 sm:py-3 bg-rose-950/30 hover:bg-rose-900/50 text-rose-300 font-semibold rounded-xl sm:rounded-2xl transition duration-200 border border-rose-800/40 text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer"
             >

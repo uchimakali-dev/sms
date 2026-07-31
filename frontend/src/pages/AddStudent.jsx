@@ -59,7 +59,7 @@ export default function AddStudent() {
         
         {/* Navigation Button */}
         <button 
-          onClick={() => navigate('/')} 
+          onClick={() => navigate('/viewstudents')} 
           className="inline-flex items-center text-xs font-semibold text-slate-400 hover:text-emerald-400 mb-4 sm:mb-6 transition-colors group cursor-pointer"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1.5 transition-transform group-hover:-translate-x-1" /> Back to directory
