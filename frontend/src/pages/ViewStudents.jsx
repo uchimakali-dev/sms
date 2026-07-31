@@ -20,7 +20,7 @@ export default function ViewStudents({ onDelete }) {
   useEffect(() => {
     setLoading(true);
     const token= localStorage.getItem('token')
-    console.log(token);
+    
     
 
     // Construct request URL with backend query parameters

@@ -47,7 +47,7 @@ export default function LoginPage() {
       
 
       // Save token or user details if returned by backend
-      if (data.token) {
+      if (data.access_token) {
         localStorage.setItem('token', data.access_token);
       }
       localStorage.setItem('user', JSON.stringify(data.user || { username: formData.username }));

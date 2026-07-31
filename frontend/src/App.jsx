@@ -29,10 +29,15 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const API_BASE_URL = "https://sms-mxnw.onrender.com";
-  const token=localStorage.getItem('token')
+  
 
   useEffect(() => {
     // Perform the GET request
+    const token=localStorage.getItem('token')
+    if(!token){
+      setLoading(false)
+      return
+    }
     
     
     fetch(`${API_BASE_URL}/all_students`,{
@@ -93,6 +98,7 @@ export default function App() {
   // Update
   const handleUpdateStudent = async (id, updatedStudent) => {
     try {
+      const token=localStorage.getItem('token')
       const response = await fetch(`${API_BASE_URL}/update_student/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json',
@@ -119,6 +125,7 @@ export default function App() {
     }
 
     try {
+      const token=localStorage.getItem('token')
       const response = await fetch(`${API_BASE_URL}/delete_student/${id}`, {
         method: 'DELETE',
         headers:{
