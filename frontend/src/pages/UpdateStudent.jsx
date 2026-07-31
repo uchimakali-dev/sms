@@ -27,7 +27,7 @@ export default function UpdateStudent({ students, onUpdate }) {
         ...form,
         age: parseInt(form.age, 10) || 0
       });
-      navigate("/");
+      navigate("/viewstudents");
     }
   };
 

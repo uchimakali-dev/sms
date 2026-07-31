@@ -7,6 +7,7 @@ export default function AddStudent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const API_BASE_URL = "https://sms-mxnw.onrender.com";
+  const token=localStorage.getItem('token')
 
   const [form, setForm] = useState({
     student_name: '',
@@ -24,7 +25,9 @@ export default function AddStudent() {
       const response = await fetch(`${API_BASE_URL}/add_student`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          "Authorization":`Bearer ${token}`,
+          'Content-Type': 'application/json'
+
         },
         body: JSON.stringify({
           ...form
@@ -39,7 +42,7 @@ export default function AddStudent() {
       console.log('Success:', data);
       
       // Redirect back to view all students list on success
-      navigate('/');
+      navigate('/viewstudents');
     } catch (err) {
       setError(err.message);
     } finally {

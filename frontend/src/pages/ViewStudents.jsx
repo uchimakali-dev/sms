@@ -7,6 +7,7 @@ export default function ViewStudents({ onDelete }) {
   const [loading, setLoading] = useState(true);
   const API_BASE_URL = "https://sms-mxnw.onrender.com";
   const [error, setError] = useState(null);
+  
 
   // Search and Sort query parameters for Backend API
   const [search, setSearchTerm] = useState('');
@@ -18,13 +19,22 @@ export default function ViewStudents({ onDelete }) {
 
   useEffect(() => {
     setLoading(true);
+    const token= localStorage.getItem('token')
+    console.log(token);
+    
 
     // Construct request URL with backend query parameters
     const params = new URLSearchParams();
     if (search) params.append('search', search);
     if (sort) params.append('sort', sort);
 
-    fetch(`${API_BASE_URL}/students?${params.toString()}`)
+    fetch(`${API_BASE_URL}/students?${params.toString()}`,{
+        method:"GET",
+        headers:{
+          "Authorization":`Bearer ${token}`
+        }
+    }
+  )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

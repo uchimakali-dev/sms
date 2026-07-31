@@ -6,7 +6,7 @@ export default function StudentDetails({ students, onDelete }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const student = students.find((s) => s.id === parseInt(id, 10));
-
+  console.log(students)
   // Not Found State
   if (!student) {
     return (

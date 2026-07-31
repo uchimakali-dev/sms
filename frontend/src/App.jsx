@@ -29,10 +29,18 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const API_BASE_URL = "https://sms-mxnw.onrender.com";
+  const token=localStorage.getItem('token')
 
   useEffect(() => {
     // Perform the GET request
-    fetch(`${API_BASE_URL}/all_students`)
+    
+    
+    fetch(`${API_BASE_URL}/all_students`,{
+      method:'GET',
+      headers:{
+        "Authorization":`Bearer ${token}`
+      }
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -87,7 +95,9 @@ export default function App() {
     try {
       const response = await fetch(`${API_BASE_URL}/update_student/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',
+          "Authorization":`Bearer ${token}`
+        },
         body: JSON.stringify({
           ...updatedStudent,
         }),
@@ -111,6 +121,9 @@ export default function App() {
     try {
       const response = await fetch(`${API_BASE_URL}/delete_student/${id}`, {
         method: 'DELETE',
+        headers:{
+          "Authorization":`Bearer ${token}`
+        }
       });
 
       if (!response.ok) {

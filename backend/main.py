@@ -75,7 +75,8 @@ def login(data:OAuth2PasswordRequestForm = Depends(),db:Session=Depends(get_db))
         token=webtoken.create_token(user.user_id)
         return {
             "success":True,
-            "access_token":token
+            "access_token":token,
+            "userid":user.user_id
         }
 
     else:
@@ -86,7 +87,7 @@ def login(data:OAuth2PasswordRequestForm = Depends(),db:Session=Depends(get_db))
 
 
 def get_current_user(token:str=Depends(oauth2_scheme)):
-    if token=="undefined":
+    if not token or token in ["undefined", "null", "Bearer null", "Bearer undefined"]:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or missing authentcation token"
