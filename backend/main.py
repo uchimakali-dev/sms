@@ -1,13 +1,18 @@
-from fastapi import FastAPI,Depends
+from fastapi import FastAPI,Depends,HTTPException,status
 from fastapi.middleware.cors import CORSMiddleware
 from database import session,engine
 import database_model
+from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 import os
+import password
+import webtoken
+import bcrypt
 
 database_model.Base.metadata.create_all(bind=engine)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 app=FastAPI()
 @app.api_route("/",methods=['GET',"HEAD"])
@@ -35,6 +40,11 @@ class students(BaseModel):
     department:str
 
 
+class LoginData(BaseModel):
+    name:str
+    password:str
+
+
 def get_db():
     db=session()
 
@@ -45,13 +55,55 @@ def get_db():
 
 
 
+
+@app.post("/login")
+def login(data:OAuth2PasswordRequestForm = Depends(),db:Session=Depends(get_db)):
+
+    user=db.query(database_model.users).filter(database_model.users.username==data.username).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="incorrect username or password"
+        )
+    hashed_pwd=(user.pwd)
+
+
+    success=password.verify_password(data.password,hashed_pwd)
+
+    if success:
+        token=webtoken.create_token(user.user_id)
+        return {
+            "success":True,
+            "access_token":token
+        }
+
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="incorrect username or password"
+        )
+
+
+def get_current_user(token:str=Depends(oauth2_scheme)):
+    if token=="undefined":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or missing authentcation token"
+        )
+    return webtoken.verify_token(token)
+
+
+    
+    
 @app.get("/")
 def home():
     return {"message":"welcome the student management API"}
 
 
 @app.post("/add_student")
-def new_student(data:students):
+def new_student(data:students,user:dict=Depends(get_current_user)):
+
     db=session()
     db.add(database_model.students(**data.model_dump()))
 
@@ -62,7 +114,7 @@ def new_student(data:students):
     }
 
 @app.get("/students/")
-def sort_student(search:str=None ,sort:str=None,db:Session=Depends(get_db)):
+def sort_student(search:str=None ,sort:str=None,db:Session=Depends(get_db),user:dict=Depends(get_current_user)):
 
 
     stud=db.query(database_model.students)
@@ -83,14 +135,14 @@ def sort_student(search:str=None ,sort:str=None,db:Session=Depends(get_db)):
     
 @app.get("/all_students")
 
-def all_students(db:Session = Depends(get_db)):
+def all_students(db:Session = Depends(get_db),user:dict=Depends(get_current_user)):
     all_stud=db.query(database_model.students).all()
 
     return all_stud
 
 
 @app.get("/students/{student_id}")
-def one_student(student_id:int,db:Session=Depends(get_db)):
+def one_student(student_id:int,db:Session=Depends(get_db),user:dict=Depends(get_current_user)):
 
     stud=db.query(database_model.students).filter(database_model.students.id==student_id).first()
     if stud:
@@ -99,7 +151,7 @@ def one_student(student_id:int,db:Session=Depends(get_db)):
 
 
 @app.put("/update_student/{student_id}")
-def change_data(student_id:int,data:students,db:Session=Depends(get_db)):
+def change_data(student_id:int,data:students,db:Session=Depends(get_db),user:dict=Depends(get_current_user)):
 
     stud=db.query(database_model.students).filter(database_model.students.id==student_id).first()
 
@@ -115,7 +167,7 @@ def change_data(student_id:int,data:students,db:Session=Depends(get_db)):
 
 
 @app.delete("/delete_student/{student_id}")
-def delete_data(student_id:int, db:Session=Depends(get_db)):
+def delete_data(student_id:int, db:Session=Depends(get_db),user:dict=Depends(get_current_user)):
 
     stud=db.query(database_model.students).filter(database_model.students.id==student_id).first()
 

@@ -12,3 +12,16 @@ class students(Base):
     email=Column(String(100))
     department=Column(String(50))
 
+
+class users(Base):
+
+    __tablename__ = "users"
+
+    user_id=Column(Integer,primary_key=True,index=True)
+    username=Column(String(200))
+    pwd=Column(String(64))
+
+
+
+
+
