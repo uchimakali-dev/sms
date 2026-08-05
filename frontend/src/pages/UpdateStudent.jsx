@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Building2, Save, X, Sparkles, ArrowLeft, AlertCircle, Hash } from 'lucide-react';
+import { User, Mail, Building2, Save, X, Sparkles, ArrowLeft, AlertCircle, DollarSign, CheckCircle2, Calendar } from 'lucide-react';
 
 export default function UpdateStudent({ students, onUpdate }) {
   const { id } = useParams();
@@ -8,15 +8,24 @@ export default function UpdateStudent({ students, onUpdate }) {
 
   const [form, setForm] = useState({
     student_name: '',
-    email: '',
     department: '',
-    age: ''
+    age: '',
+    amount_due: '',
+    amount_paid: '',
+    date_of_pay: '',
+    fees_paid: false
   });
 
   useEffect(() => {
     const student = students.find((s) => s.id === parseInt(id, 10));
     if (student) {
-      setForm(student);
+      setForm({
+        ...student,
+        amount_due: student.amount_due ?? '',
+        amount_paid: student.amount_paid ?? '',
+        date_of_pay: student.date_of_pay ?? '',
+        fees_paid: Boolean(student.paid)
+      });
     }
   }, [students, id]);
 
@@ -25,7 +34,11 @@ export default function UpdateStudent({ students, onUpdate }) {
     if (form.id) {
       onUpdate(form.id, {
         ...form,
-        age: parseInt(form.age, 10) || 0
+        age: parseInt(form.age, 10) || 0,
+        amount_due: parseFloat(form.amount_due) || 0,
+        amount_paid: parseFloat(form.amount_paid) || 0,
+        date_of_pay: form.date_of_pay || '',
+        fees_paid: Boolean(form.fees_paid)
       });
       navigate("/viewstudents");
     }
@@ -113,45 +126,103 @@ export default function UpdateStudent({ students, onUpdate }) {
             </div>
 
             {/* Email Input */}
+            
+
+            {/* Department Input */}
             <div>
               <label className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 sm:mb-1.5">
-                Email Address
+                Department
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Building2 className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="email"
+                  type="text"
                   required
-                  placeholder="e.g. alex@example.com"
-                  className="w-full bg-slate-950/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition"
-                  value={form?.email || ''}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="e.g. Computer Science"
+                  className="w-full bg-slate-950/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition uppercase tracking-wide"
+                  value={form?.department || ''}
+                  onChange={(e) => setForm({ ...form, department: e.target.value })}
                 />
               </div>
             </div>
 
-            {/* Grid Layout for Department and Age */}
-            
-              
-              {/* Department / Course Input */}
+            {/* Fee Details Section */}
+            <div className="pt-3 border-t border-slate-800/80">
+              <span className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3">
+                Fee Details
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                {/* Amount Due */}
+                <div>
+                  <label className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 sm:mb-1.5">
+                    Amount Due ($)
+                  </label>
+                  <div className="relative">
+                    <DollarSign className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      className="w-full bg-slate-950/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition"
+                      value={form?.amount_due || ''}
+                      onChange={(e) => setForm({ ...form, amount_due: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                {/* Amount Paid */}
+                <div>
+                  <label className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 sm:mb-1.5">
+                    Amount Paid ($)
+                  </label>
+                  <div className="relative">
+                    <DollarSign className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      className="w-full bg-slate-950/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition"
+                      value={form?.amount_paid || ''}
+                      onChange={(e) => setForm({ ...form, amount_paid: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Date of Payment */}
               <div>
                 <label className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1 sm:mb-1.5">
-                  Department
+                  Date of Payment
                 </label>
                 <div className="relative">
-                  <Building2 className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
-                    type="text"
-                    required
-                    placeholder="e.g. Computer Science"
-                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition uppercase tracking-wide"
-                    value={form?.department || ''}
-                    onChange={(e) => setForm({ ...form, department: e.target.value })}
+                    type="date"
+                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition scheme-dark"
+                    value={form?.date_of_pay || ''}
+                    onChange={(e) => setForm({ ...form, date_of_pay: e.target.value })}
                   />
                 </div>
               </div>
 
-              
+              {/* Full Paid Checkbox Toggle */}
+              <div className="mt-3.5 flex items-center gap-3 p-3 bg-slate-950/40 border border-slate-800/80 rounded-xl">
+                <input
+                  type="checkbox"
+                  id="fees_paid"
+                  checked={Boolean(form?.fees_paid)}
+                  onChange={(e) => setForm({ ...form, fees_paid: e.target.checked })}
+                  className="w-4 h-4 accent-emerald-500 bg-slate-900 border-slate-700 rounded cursor-pointer"
+                />
+                <label htmlFor="fees_paid" className="flex items-center gap-2 text-xs font-medium text-slate-200 cursor-pointer select-none">
+                  <CheckCircle2 className={`w-4 h-4 ${form?.fees_paid ? 'text-emerald-400' : 'text-slate-500'}`} />
+                  Mark as Fully Paid
+                </label>
+              </div>
+            </div>
 
             {/* Action Buttons */}
             <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 pt-4 sm:pt-6 border-t border-slate-800/80 mt-5 sm:mt-6">

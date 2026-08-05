@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ViewStudents from "./pages/ViewStudents";
 import AddStudent from "./pages/AddStudent";
@@ -8,12 +8,13 @@ import StudentDetails from "./pages/StudentDetails";
 import { Loader2, Sparkles } from "lucide-react";
 import LoginPage from "./pages/Login";
 
+
 // Protected Route Guard Component
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem("token") || localStorage.getItem("user");
 
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -28,13 +29,35 @@ export default function App() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const API_BASE_URL = "https://sms-mxnw.onrender.com";
+  const API_BASE_URL = "http://127.0.0.1:8000";
+  const [token,setToken]=useState(localStorage.getItem('token'))
+
+  const isTokenExpired = (token) => {
+  if (!token) return true;
+
+  try {
+    // A JWT has 3 parts: header.payload.signature
+    // We split by '.' and grab the payload (index 1)
+    const payloadBase64 = token.split('.')[1];
+    const decodedJson = atob(payloadBase64);
+    const decodedPayload = JSON.parse(decodedJson);
+
+    // JWT exp is in seconds, Date.now() is in milliseconds
+    const currentTime = Math.floor(Date.now() / 1000); 
+
+    // Returns true if the token is expired
+    return decodedPayload.exp < currentTime; 
+  } catch (error) {
+    // If the token is malformed, treat it as expired
+    return true; 
+  }
+};
   
 
   useEffect(() => {
     // Perform the GET request
-    const token=localStorage.getItem('token')
-    if(!token){
+    
+    if(!token || isTokenExpired(token)){
       setLoading(false)
       return
     }
@@ -43,6 +66,7 @@ export default function App() {
     fetch(`${API_BASE_URL}/all_students`,{
       method:'GET',
       headers:{
+        "Content-Type":"application/json",
         "Authorization":`Bearer ${token}`
       }
     })
@@ -61,7 +85,7 @@ export default function App() {
         setError(err.message);
         setLoading(false);
       });
-  }, []); // Empty dependency array ensures this runs once on component mount
+  }, [token]); // Empty dependency array ensures this runs once on component mount
 
   // Initial Full-Page Loading State
   if (loading) {
@@ -85,6 +109,7 @@ export default function App() {
           <span className="text-3xl mb-3 block">⚠️</span>
           <h2 className="text-xl font-bold text-rose-300 mb-2">Connection Error</h2>
           <p className="text-sm text-rose-200/80">{error}</p>
+          
         </div>
       </div>
     );
@@ -92,7 +117,7 @@ export default function App() {
 
   // Create
   const handleAddStudent = (newStudent) => {
-    setStudents([...students, { ...newStudent, id: Date.now() }]);
+    setStudents((prev) => [...prev, newStudent]);
   };
 
   // Update
@@ -121,7 +146,7 @@ export default function App() {
   // Delete
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this student record?")) {
-      return;
+      return false;
     }
 
     try {
@@ -136,13 +161,15 @@ export default function App() {
       if (!response.ok) {
         throw new Error(`Failed to delete student. Status: ${response.status}`);
       }
+      return true;
 
       // Update state locally so the delestudent instantly disappears from the UI
-      setStudents((prevStudents) => prevStudents.filter((s) => s.id !== id));
+      
       
     } catch (error) {
       console.error("Error deleting student:", error);
       alert("Could not delete the student. Please try again.");
+      return false;
     }
   };
 
@@ -152,7 +179,7 @@ export default function App() {
         
         <main className="flex-1 w-full">
           <Routes>
-            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
             
             <Route
               path="/viewstudents"
@@ -198,7 +225,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </main>
       </div>

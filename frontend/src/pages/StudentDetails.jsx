@@ -1,12 +1,20 @@
 import React from 'react';
+import { format, formatDate, parseISO } from "date-fns";
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2, Mail, Building2, Sparkles, User, AlertCircle, Hash } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Mail, Building2, Sparkles, User, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
 
 export default function StudentDetails({ students, onDelete }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const student = students.find((s) => s.id === parseInt(id, 10));
-  console.log(students)
+  console.log(students);
+
+  const dateFormat = (d) => {
+    if (!d) return "-";
+    const formated = format(parseISO(d), "dd-MM-yyyy");
+    return formated;
+  };
+
   // Not Found State
   if (!student) {
     return (
@@ -30,6 +38,29 @@ export default function StudentDetails({ students, onDelete }) {
     );
   }
 
+  const NumberofDue=(fees)=>{
+    const [date,month,year]=student.dateofjoin.split("-")
+    const lst_mnt=parseInt(month)
+
+    const cur_mon=new Date().getMonth()+1;
+  
+    const lst_paid=fees.paid
+    const due=(cur_mon-lst_mnt)
+    if ((!lst_paid)){
+      return due+1
+    }
+    else{
+      return due
+    }
+  }
+
+  
+  // Determine fee payment status (Checks student.fees_paid boolean or string)
+  const isFeesPaid = Boolean(student.fees[0].paid);
+  const duecount=NumberofDue(student.fees)
+  
+  
+
   return (
     <div className="w-full min-h-screen bg-slate-950 pt-10 md:flex items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
       
@@ -50,8 +81,23 @@ export default function StudentDetails({ students, onDelete }) {
         {/* Main Glass Profile Card */}
         <div className="bg-slate-900/60 backdrop-blur-xl p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl shadow-emerald-950/20 relative overflow-hidden">
           
+          {/* Top Right Fees Paid Status Indicator */}
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+            {isFeesPaid ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                Fees Paid
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-xs">
+                <XCircle className="w-3.5 h-3.5 text-rose-400" />
+                 Fees Pending : Due count {duecount}
+              </span>
+            )}
+          </div>
+
           {/* Student Avatar & Basic Info */}
-          <div className="flex items-center gap-3.5 sm:gap-4 mb-6 sm:mb-8 relative z-10">
+          <div className="flex items-center gap-3.5 sm:gap-4 mb-6 sm:mb-8 relative z-10 pr-20 sm:pr-24">
             <div className="w-14 h-14 sm:w-16 sm:h-16 bg-linear-to-tr from-emerald-600 via-teal-500 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-slate-950 font-extrabold text-2xl shadow-lg shadow-emerald-500/20 shrink-0">
               <User className="w-7 h-7 sm:w-8 sm:h-8 text-slate-950" />
             </div>
@@ -71,46 +117,28 @@ export default function StudentDetails({ students, onDelete }) {
           {/* Detailed Attribute Blocks */}
           <div className="space-y-3 my-4 sm:my-6 pt-4 sm:pt-6 border-t border-slate-800/80">
             
-            {/* Email Card */}
+            {/* Email / Date Card */}
             <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-xl sm:rounded-2xl border border-slate-800/60 group">
               <div className="p-2.5 bg-slate-900 rounded-xl text-emerald-400 border border-slate-800 group-hover:border-emerald-500/30 transition shrink-0">
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] sm:text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Email Address</p>
-                <p className="text-slate-200 font-medium text-xs sm:text-sm mt-0.5 truncate">{student.email}</p>
+                <p className="text-[10px] sm:text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Date of Join</p>
+                <p className="text-slate-200 font-medium text-xs sm:text-sm mt-0.5 truncate">{dateFormat(student.dateofjoin)}</p>
               </div>
             </div>
 
-            {/* Grid Layout for Department and Age */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              
-              {/* Department / Course Card */}
-              <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-xl sm:rounded-2xl border border-slate-800/60 group">
-                <div className="p-2.5 bg-slate-900 rounded-xl text-teal-400 border border-slate-800 group-hover:border-teal-500/30 transition shrink-0">
-                  <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] sm:text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Department</p>
-                  <p className="text-slate-200 font-medium text-xs sm:text-sm mt-0.5 uppercase tracking-wide truncate">
-                    {student.department}
-                  </p>
-                </div>
+            {/* Department / Course Card */}
+            <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-xl sm:rounded-2xl border border-slate-800/60 group">
+              <div className="p-2.5 bg-slate-900 rounded-xl text-teal-400 border border-slate-800 group-hover:border-teal-500/30 transition shrink-0">
+                <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-
-              {/* Age Card */}
-              <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-xl sm:rounded-2xl border border-slate-800/60 group">
-                <div className="p-2.5 bg-slate-900 rounded-xl text-cyan-400 border border-slate-800 group-hover:border-cyan-500/30 transition shrink-0">
-                  <Hash className="w-4 h-4 sm:w-5 sm:h-5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] sm:text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Age</p>
-                  <p className="text-slate-200 font-medium text-xs sm:text-sm mt-0.5">
-                    {student.age || 'N/A'}
-                  </p>
-                </div>
+              <div className="min-w-0">
+                <p className="text-[10px] sm:text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Department</p>
+                <p className="text-slate-200 font-medium text-xs sm:text-sm mt-0.5 uppercase tracking-wide truncate">
+                  {student.department}
+                </p>
               </div>
-
             </div>
 
           </div>
@@ -125,9 +153,11 @@ export default function StudentDetails({ students, onDelete }) {
             </Link>
 
             <button
-              onClick={() => {
-                onDelete(student.id);
-                navigate("/viewstudents");
+              onClick={async () => {
+                const success = await onDelete(student.id);
+                if (success) {
+                  navigate("/viewstudents");
+                }
               }}
               className="w-full sm:w-auto px-5 py-2.5 sm:py-3 bg-rose-950/30 hover:bg-rose-900/50 text-rose-300 font-semibold rounded-xl sm:rounded-2xl transition duration-200 border border-rose-800/40 text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer"
             >

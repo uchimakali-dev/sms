@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Building, User, ArrowLeft, Loader2, Sparkles, Hash } from 'lucide-react';
+import { 
+  UserPlus, 
+  Building, 
+  User, 
+  ArrowLeft, 
+  Loader2, 
+  Sparkles, 
+  Calendar, 
+  IndianRupee, 
+  CheckCircle 
+} from 'lucide-react';
 
-export default function AddStudent() {
+export default function AddStudent({ onAdd }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const API_BASE_URL = "https://sms-mxnw.onrender.com";
-  const token=localStorage.getItem('token')
+  const API_BASE_URL = "http://127.0.0.1:8000";
+  const token = localStorage.getItem('token');
 
   const [form, setForm] = useState({
     student_name: '',
-    email: '',
+    dateofjoin: new Date().toISOString().split('T')[0], // Defaults to YYYY-MM-DD
+    amount_due: 0,
+    amount_paid: 0,
     department: '',
-    age: ''
+    paid: false
   });
 
   const handleSubmit = async (e) => {
@@ -21,17 +33,21 @@ export default function AddStudent() {
     setLoading(true);
     setError(null);
 
+    // Format payload to ensure numeric types are sent properly
+    const payload = {
+      ...form,
+      amount_due: Number(form.amount_due),
+      amount_paid: Number(form.amount_paid)
+    };
+
     try {
       const response = await fetch(`${API_BASE_URL}/add_student`, {
         method: 'POST',
         headers: {
-          "Authorization":`Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
           'Content-Type': 'application/json'
-
         },
-        body: JSON.stringify({
-          ...form
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -40,6 +56,8 @@ export default function AddStudent() {
 
       const data = await response.json();
       console.log('Success:', data);
+
+      if (onAdd) onAdd(payload);
       
       // Redirect back to view all students list on success
       navigate('/viewstudents');
@@ -86,7 +104,7 @@ export default function AddStudent() {
         {error && (
           <div className="mb-5 p-3 sm:p-3.5 bg-rose-950/40 border border-rose-800/60 text-rose-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-medium flex items-center gap-2.5 backdrop-blur-md">
             <span className="shrink-0">⚠️</span> 
-            <p className="">{error}</p>
+            <p>{error}</p>
           </div>
         )}
 
@@ -111,27 +129,8 @@ export default function AddStudent() {
             </div>
           </div>
 
-          {/* Email Address */}
-          <div>
-            <label className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1 sm:mb-1.5">
-              Email Address
-            </label>
-            <div className="relative group">
-              <Mail className="w-4 h-4 absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors" />
-              <input
-                type="email"
-                required
-                className="w-full pl-10 sm:pl-11 pr-4 py-2 sm:py-2.5 bg-slate-800/50 border border-slate-700/80 rounded-xl sm:rounded-2xl text-white text-sm placeholder-slate-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition duration-200"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="mariyappa@gmail.com"
-              />
-            </div>
-          </div>
-
-          {/* Grid Layout for Department and Age */}
-          
-            
+          {/* Grid Layout for Department and Date of Join */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
             {/* Department */}
             <div>
               <label className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1 sm:mb-1.5">
@@ -150,10 +149,82 @@ export default function AddStudent() {
               </div>
             </div>
 
-            {/* Age Input */}
-            
+            {/* Date of Join */}
+            <div>
+              <label className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1 sm:mb-1.5">
+                Date of Join
+              </label>
+              <div className="relative group">
+                <Calendar className="w-4 h-4 absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors" />
+                <input
+                  type="date"
+                  required
+                  className="w-full pl-10 sm:pl-11 pr-4 py-2 sm:py-2.5 bg-slate-800/50 border border-slate-700/80 rounded-xl sm:rounded-2xl text-white text-sm placeholder-slate-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition duration-200 [scheme-dark]"
+                  value={form.dateofjoin}
+                  onChange={(e) => setForm({ ...form, dateofjoin: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
 
-          
+          {/* Grid Layout for Amount Paid and Amount Due */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+            {/* Amount Paid */}
+            <div>
+              <label className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1 sm:mb-1.5">
+                Amount Paid
+              </label>
+              <div className="relative group">
+                <IndianRupee className="w-4 h-4 absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors" />
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  required
+                  className="w-full pl-10 sm:pl-11 pr-4 py-2 sm:py-2.5 bg-slate-800/50 border border-slate-700/80 rounded-xl sm:rounded-2xl text-white text-sm placeholder-slate-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition duration-200"
+                  value={form.amount_paid}
+                  onChange={(e) => setForm({ ...form, amount_paid: e.target.value })}
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            {/* Amount Due */}
+            <div>
+              <label className="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1 sm:mb-1.5">
+                fees Amount
+              </label>
+              <div className="relative group">
+                <IndianRupee className="w-4 h-4 absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors" />
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  required
+                  className="w-full pl-10 sm:pl-11 pr-4 py-2 sm:py-2.5 bg-slate-800/50 border border-slate-700/80 rounded-xl sm:rounded-2xl text-white text-sm placeholder-slate-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition duration-200"
+                  value={form.amount_due}
+                  onChange={(e) => setForm({ ...form, amount_due: e.target.value })}
+                  placeholder="0"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Paid Status Toggle */}
+          <div className="pt-2">
+            <label className="flex items-center gap-3 cursor-pointer p-3 bg-slate-800/30 border border-slate-700/50 rounded-xl sm:rounded-2xl hover:bg-slate-800/50 transition duration-200">
+              <input
+                type="checkbox"
+                checked={form.paid}
+                onChange={(e) => setForm({ ...form, paid: e.target.checked })}
+                className="w-4 h-4 text-emerald-500 bg-slate-800 border-slate-600 rounded focus:ring-emerald-500 focus:ring-2 focus:ring-offset-slate-900 cursor-pointer"
+              />
+              <div className="flex items-center gap-2 text-sm font-medium text-slate-200">
+                <CheckCircle className={`w-4 h-4 ${form.paid ? 'text-emerald-400' : 'text-slate-500'}`} />
+                <span>Mark Fee Payment as Fully Settled</span>
+              </div>
+            </label>
+          </div>
 
           {/* Submit Button */}
           <button

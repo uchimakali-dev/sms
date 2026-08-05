@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import {format,parseISO} from "date-fns";
 import { Eye, Edit, Trash2, UserPlus, Search, Sparkles, Loader2, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function ViewStudents({ onDelete }) {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const API_BASE_URL = "https://sms-mxnw.onrender.com";
+  const API_BASE_URL = "http://127.0.0.1:8000";
   const [error, setError] = useState(null);
   
 
@@ -68,6 +69,12 @@ export default function ViewStudents({ onDelete }) {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
 
+  const dateFormat=(d)=>{
+    const formated=format(parseISO(d),"dd-MM-yyyy");
+    return formated
+
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 p-4 sm:p-6 md:p-8 relative overflow-hidden text-slate-100">
       
@@ -125,7 +132,7 @@ export default function ViewStudents({ onDelete }) {
                 Name
               </option>
               <option value="email" className="bg-slate-900 text-slate-100 py-2">
-                Email
+                Dateofjoin
               </option>
               <option value="department" className="bg-slate-900 text-slate-100 py-2">
                 Department
@@ -162,8 +169,8 @@ export default function ViewStudents({ onDelete }) {
                   <thead>
                     <tr className="bg-slate-800/50 border-b border-slate-800 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                       <th className="p-4 pl-6">Name</th>
-                      <th className="p-4">Email</th>
                       <th className="p-4">Department</th>
+                      <th className="p-4">dateofjoin</th>
                       <th className="p-4 pr-6 text-right">Actions</th>
                     </tr>
                   </thead>
@@ -171,10 +178,10 @@ export default function ViewStudents({ onDelete }) {
                     {currentStudents.map((student) => (
                       <tr key={student.id} className="hover:bg-slate-800/40 transition-colors">
                         <td className="p-4 pl-6 font-semibold text-white">{student.student_name}</td>
-                        <td className="p-4 text-slate-400">{student.email}</td>
+                        <td className="p-4 text-slate-400">{student.department}</td>
                         <td className="p-4">
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wide">
-                            {student.department}
+                            {dateFormat(student.dateofjoin)}
                           </span>
                         </td>
 
@@ -200,9 +207,11 @@ export default function ViewStudents({ onDelete }) {
 
                             {/* Delete Button */}
                             <button
-                              onClick={() => {
-                                onDelete(student.id);
+                              onClick={async () => {
+                                const success=await onDelete(student.id);
+                                if(success){
                                 setStudents((prevStudents) => prevStudents.filter((s) => s.id !== student.id));
+                                }
                               }}
                               className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors"
                               title="Delete Student"
@@ -224,10 +233,10 @@ export default function ViewStudents({ onDelete }) {
                     <div className="flex justify-between items-start gap-2">
                       <div>
                         <h3 className="font-semibold text-white text-base">{student.student_name}</h3>
-                        <p className="text-xs text-slate-400 break-all">{student.email}</p>
+                        <p className="text-xs text-slate-400 break-all">{student.department}</p>
                       </div>
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wide shrink-0">
-                        {student.department}
+                        {student.dateofjoin}
                       </span>
                     </div>
 
