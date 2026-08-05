@@ -1,5 +1,6 @@
 import jwt
 import datetime
+from fastapi import HTTPException,status
 from dotenv import load_dotenv
 import os
 
@@ -25,9 +26,15 @@ def verify_token(token):
         decoded_token=jwt.decode(token,secret_key,algorithms=["HS256"])
         return decoded_token
     except jwt.ExpiredSignatureError:
-        print("token is expired")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="token expired"
+        )
     except jwt.InvalidTokenError:
-        print("token is invalid")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="token invalid"
+        )
 
     
 

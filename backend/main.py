@@ -1,15 +1,19 @@
 from fastapi import FastAPI,Depends,HTTPException,status
 from fastapi.middleware.cors import CORSMiddleware
 from database import session,engine
+from datetime import date
 import database_model
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session,joinedload,relationship
 from dotenv import load_dotenv
 import os
 import password
 import webtoken
 import bcrypt
+from sqlalchemy import select
+
+
 
 database_model.Base.metadata.create_all(bind=engine)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
@@ -36,8 +40,11 @@ app.add_middleware(
 
 class students(BaseModel):
     student_name:str
-    email:str
+    dateofjoin:date
+    amount_due:int
+    amount_paid:int
     department:str
+    paid:bool
 
 
 class LoginData(BaseModel):
@@ -105,8 +112,31 @@ def home():
 @app.post("/add_student")
 def new_student(data:students,user:dict=Depends(get_current_user)):
 
+    stud={
+        "student_name":data.student_name,
+        "dateofjoin":data.dateofjoin,
+        "department":data.department
+        }
+    
+
+    
     db=session()
-    db.add(database_model.students(**data.model_dump()))
+    
+    new_student=database_model.students(**stud)
+    db.add(new_student)
+
+    db.flush()
+
+    fee={
+            "student_id":new_student.id,
+            "month":data.dateofjoin.month,
+            "year":data.dateofjoin.year,
+            "amount_due":data.amount_due,
+            "amount_paid":data.amount_paid,
+            "paid":data.paid
+        }
+    
+    db.add(database_model.fees(**fee))
 
     db.commit()
 
@@ -124,10 +154,10 @@ def sort_student(search:str=None ,sort:str=None,db:Session=Depends(get_db),user:
         stud=stud.filter(database_model.students.student_name.contains(search))
     if sort=="name":
         stud=stud.order_by(database_model.students.student_name)
+    if sort=="dateofjoin":
+        stud=stud.order_by(database_model.students.dateofjoin)
     if sort=="department":
         stud=stud.order_by(database_model.students.department)
-    if sort=="email":
-        stud=stud.order_by(database_model.students.email)
 
     stud=stud.all()
 
@@ -137,15 +167,16 @@ def sort_student(search:str=None ,sort:str=None,db:Session=Depends(get_db),user:
 @app.get("/all_students")
 
 def all_students(db:Session = Depends(get_db),user:dict=Depends(get_current_user)):
-    all_stud=db.query(database_model.students).all()
-
-    return all_stud
+    ses=session()
+    stmt=select(database_model.students).options(joinedload(database_model.students.fees))
+    stud=ses.scalars(stmt).unique().all()
+    return stud
 
 
 @app.get("/students/{student_id}")
 def one_student(student_id:int,db:Session=Depends(get_db),user:dict=Depends(get_current_user)):
 
-    stud=db.query(database_model.students).filter(database_model.students.id==student_id).first()
+    stud=db.query(database_model.students).filter(database_model.students.id==student_id).options(joinedload(database_model.students.fees)).first()
     if stud:
         return stud
     return "student is not found"
@@ -155,15 +186,41 @@ def one_student(student_id:int,db:Session=Depends(get_db),user:dict=Depends(get_
 def change_data(student_id:int,data:students,db:Session=Depends(get_db),user:dict=Depends(get_current_user)):
 
     stud=db.query(database_model.students).filter(database_model.students.id==student_id).first()
+    fee=db.query(database_model.fees).filter(database_model.fees.student_id==student_id and database_model.fees.month==data.month and database_model.fees.year==data.year and database_model.fees.paid==False).first()
+    res=False
+    if data.amount_due==0:
+        res=True
 
     if not stud:
-        return {"message":"student doesn't exists"}
+            return {"message":"student doesn't exists"}
+    
+    if fee:
+        fee.student_id=student_id
+        fee.month=data.dateofjoin.month
+        fee.year=data.dateofjoin.year
+        fee.amount_due=data.amount_due
+        fee.amount_paid=data.amount_paid
+        fee.paid=res
+
+    else:
+        
+        fd={"student_id":student_id,
+            "month":data.dateofjoin.date,
+            "year":data.dateofjoin.year,
+            "amount_due":data.amount_due,
+            "amount_paid":data.amount_paid,
+            "paid":res}
+
+        update_fee=database_model.fees(**fd)
+        db.add(update_fee)
+
 
     stud.student_name=data.student_name 
     stud.department=data.department 
-    stud.email=data.email
+    
 
     db.commit()
+   
     return {"message":"data updated successfully"}
 
 
