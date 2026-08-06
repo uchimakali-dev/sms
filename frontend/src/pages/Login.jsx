@@ -17,7 +17,7 @@ export default function LoginPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const API_BASE_URL = "https://sms-mxnw.onrender.com"
+  const API_BASE_URL = "https://sms-mxnw.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
