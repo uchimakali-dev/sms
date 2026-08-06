@@ -7,6 +7,7 @@ import UpdateStudent from "./pages/UpdateStudent";
 import StudentDetails from "./pages/StudentDetails";
 import { Loader2, Sparkles } from "lucide-react";
 import LoginPage from "./pages/Login";
+import PublicRoute from "./components/PublicRoute";
 
 
 // Protected Route Guard Component
@@ -179,7 +180,7 @@ export default function App() {
         
         <main className="flex-1 w-full">
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             
             <Route
               path="/viewstudents"
