@@ -16,7 +16,7 @@ export default function Navbar() {
     
     // Close mobile menu if open and navigate to login
     setIsOpen(false);
-    navigate('/login');
+    navigate('/login',{replace:true});
   };
 
   return (
