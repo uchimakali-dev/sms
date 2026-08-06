@@ -16,7 +16,7 @@ export default function AddStudent({ onAdd }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const API_BASE_URL = "http://127.0.0.1:8000";
+  const API_BASE_URL = "https://sms-mxnw.onrender.com";
   const token = localStorage.getItem('token');
 
   const [form, setForm] = useState({
