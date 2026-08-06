@@ -11,7 +11,7 @@ import LoginPage from "./pages/Login";
 
 // Protected Route Guard Component
 const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem("token") || localStorage.getItem("user");
+  const isAuthenticated = Boolean(localStorage.getItem("token"));
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
