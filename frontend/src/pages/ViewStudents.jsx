@@ -29,7 +29,7 @@ export default function ViewStudents({ onDelete }) {
     if (search) params.append('search', search);
     if (sort) params.append('sort', sort);
 
-    fetch(`${API_BASE_URL}/students?${params.toString()}`,{
+    fetch(`${API_BASE_URL}/students/?${params.toString()}`,{
         method:"GET",
         headers:{
           "Authorization":`Bearer ${token}`
