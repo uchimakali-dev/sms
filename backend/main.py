@@ -170,6 +170,9 @@ def all_students(db:Session = Depends(get_db),user:dict=Depends(get_current_user
     ses=session()
     stmt=select(database_model.students).options(joinedload(database_model.students.fees))
     stud=ses.scalars(stmt).unique().all()
+
+    if not stud:
+        return {"message":"no student found"}
     return stud
 
 
