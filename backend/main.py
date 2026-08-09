@@ -63,7 +63,7 @@ def get_db():
 
 
 
-@app.post("/api/login")
+@app.post("/login")
 def login(data:OAuth2PasswordRequestForm = Depends(),db:Session=Depends(get_db)):
 
     user=db.query(database_model.users).filter(database_model.users.username==data.username).first()
@@ -144,7 +144,7 @@ def new_student(data:students,user:dict=Depends(get_current_user)):
         "message":"data is stored successfully"
     }
 
-@app.get("/api/students/")
+@app.get("/students/")
 def sort_student(search:str=None ,sort:str=None,db:Session=Depends(get_db),user:dict=Depends(get_current_user)):
 
 
@@ -164,7 +164,7 @@ def sort_student(search:str=None ,sort:str=None,db:Session=Depends(get_db),user:
     if stud:
         return stud
     
-@app.get("/api/all_students")
+@app.get("/all_students")
 
 def all_students(db:Session = Depends(get_db),user:dict=Depends(get_current_user)):
     ses=session()
@@ -182,7 +182,7 @@ def one_student(student_id:int,db:Session=Depends(get_db),user:dict=Depends(get_
     return "student is not found"
 
 
-@app.put("/api/update_student/{student_id}")
+@app.put("/update_student/{student_id}")
 def change_data(student_id:int,data:students,db:Session=Depends(get_db),user:dict=Depends(get_current_user)):
 
     stud=db.query(database_model.students).filter(database_model.students.id==student_id).first()
@@ -224,7 +224,7 @@ def change_data(student_id:int,data:students,db:Session=Depends(get_db),user:dic
     return {"message":"data updated successfully"}
 
 
-@app.delete("/api/delete_student/{student_id}")
+@app.delete("/delete_student/{student_id}")
 def delete_data(student_id:int, db:Session=Depends(get_db),user:dict=Depends(get_current_user)):
 
     stud=db.query(database_model.students).filter(database_model.students.id==student_id).first()
