@@ -48,8 +48,8 @@ export default function LoginPage() {
       }
 
 
-      const data = await response;
-      console.log(data)
+      const data = await response.json();
+      
 
       
 

@@ -40,6 +40,7 @@ export default function ViewStudents({ onDelete }) {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
+        console.log("from students",response);
         return response.json();
       })
       .then((data) => {
