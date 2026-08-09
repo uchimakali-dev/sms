@@ -173,7 +173,7 @@ def all_students(db:Session = Depends(get_db),user:dict=Depends(get_current_user
     return stud
 
 
-@app.get("/api/students/{student_id}")
+@app.get("/students/{student_id}")
 def one_student(student_id:int,db:Session=Depends(get_db),user:dict=Depends(get_current_user)):
 
     stud=db.query(database_model.students).filter(database_model.students.id==student_id).options(joinedload(database_model.students.fees)).first()

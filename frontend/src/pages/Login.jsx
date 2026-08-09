@@ -35,13 +35,14 @@ export default function LoginPage() {
         }),
       });
 
-      const data = await response.json();
+      
       
 
       if (!response.ok) {
         // Uses error message from server response or falls back to default
         throw new Error(data.message || data.error || 'Invalid username or password');
       }
+      const data = await response.json();
 
       
 
