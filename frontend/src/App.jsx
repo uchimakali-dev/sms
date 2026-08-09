@@ -30,7 +30,7 @@ export default function App() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const API_BASE_URL = "https://sms-mxnw.onrender.com";
+  const API_BASE_URL = "http://127.0.0.1:8000/api";
   const [token,setToken]=useState(localStorage.getItem('token'))
 
   const isTokenExpired = (token) => {
@@ -182,6 +182,16 @@ export default function App() {
           <Routes>
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             
+            
+            
+            <Route
+              path="/add"
+              element={
+                <ProtectedRoute>
+                  <AddStudent onAdd={handleAddStudent} />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/viewstudents"
               element={
@@ -190,15 +200,6 @@ export default function App() {
                     students={students}
                     onDelete={handleDelete}
                   />
-                </ProtectedRoute>
-              }
-            />
-            
-            <Route
-              path="/add"
-              element={
-                <ProtectedRoute>
-                  <AddStudent onAdd={handleAddStudent} />
                 </ProtectedRoute>
               }
             />

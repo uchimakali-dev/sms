@@ -53,6 +53,7 @@ export default function StudentDetails({ students, onDelete }) {
       return due
     }
   }
+  
 
   
   // Determine fee payment status (Checks student.fees_paid boolean or string)
