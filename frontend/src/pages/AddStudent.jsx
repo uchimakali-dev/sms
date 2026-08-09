@@ -16,7 +16,7 @@ export default function AddStudent({ onAdd }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const API_BASE_URL = "/api";
+  const API_BASE_URL = "/api/";
   const token = localStorage.getItem('token');
 
   const [form, setForm] = useState({
