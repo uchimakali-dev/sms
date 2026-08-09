@@ -109,7 +109,7 @@ def home():
     return {"message":"welcome the student management API"}
 
 
-@app.post("/api/add_student")
+@app.post("/add_student")
 def new_student(data:students,user:dict=Depends(get_current_user)):
 
     stud={
