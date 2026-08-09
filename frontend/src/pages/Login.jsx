@@ -35,6 +35,10 @@ export default function LoginPage() {
         }),
       });
 
+
+
+      
+
       
       
 
@@ -42,7 +46,10 @@ export default function LoginPage() {
         // Uses error message from server response or falls back to default
         throw new Error(data.message || data.error || 'Invalid username or password');
       }
+
+
       const data = await response.json();
+      console.log(data)
 
       
 
