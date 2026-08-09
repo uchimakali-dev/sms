@@ -48,7 +48,7 @@ export default function LoginPage() {
       }
 
 
-      const data = await response.json();
+      const data = await response;
       console.log(data)
 
       
