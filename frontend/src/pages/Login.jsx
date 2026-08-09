@@ -17,7 +17,7 @@ export default function LoginPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   };
 
-  const API_BASE_URL = "/api"
+  const API_BASE_URL = "/api/"
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
