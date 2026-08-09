@@ -5,9 +5,10 @@ import ViewStudents from "./pages/ViewStudents";
 import AddStudent from "./pages/AddStudent";
 import UpdateStudent from "./pages/UpdateStudent";
 import StudentDetails from "./pages/StudentDetails";
-import { Loader2, Sparkles } from "lucide-react";
+import { Home, Loader2, Sparkles } from "lucide-react";
 import LoginPage from "./pages/Login";
 import PublicRoute from "./components/PublicRoute";
+import Home1 from "./pages/Home";
 
 
 // Protected Route Guard Component
@@ -181,6 +182,7 @@ export default function App() {
         <main className="flex-1 w-full">
           <Routes>
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="/" element={<PublicRoute><Home1/></PublicRoute>} />
             
             
             
