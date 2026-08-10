@@ -1,7 +1,10 @@
 import React from 'react';
 import { format, parseISO } from "date-fns";
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2, Mail, Building2, Sparkles, User, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
+import { 
+  ArrowLeft, Edit, Trash2, Calendar, Building2, User, 
+  AlertCircle, CheckCircle2, XCircle, CreditCard, Hash 
+} from 'lucide-react';
 
 export default function StudentDetails({ students, onDelete }) {
   const { id } = useParams();
@@ -9,25 +12,30 @@ export default function StudentDetails({ students, onDelete }) {
   const student = students.find((s) => s.id === parseInt(id, 10));
 
   const dateFormat = (d) => {
-    if (!d) return "-";
-    return format(parseISO(d), "dd-MM-yyyy");
+    if (!d) return "N/A";
+    try {
+      return format(parseISO(d), "dd-MM-yyyy");
+    } catch {
+      return d;
+    }
   };
 
-  // Not Found State
   if (!student) {
     return (
-      <div className="w-full min-h-[50vh] flex items-center justify-center p-4">
-        <div className="w-full max-w-md my-8 text-center p-6 sm:p-8 bg-slate-900/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-800 shadow-2xl">
-          <div className="w-12 h-12 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shrink-0">
+      <div className="min-h-screen bg-slate-50 p-4 sm:p-6 md:p-8 text-slate-800 flex items-center justify-center">
+        <div className="w-full max-w-md text-center p-8 bg-white rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <div className="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto border border-red-100">
             <AlertCircle className="w-6 h-6" />
           </div>
-          <h2 className="text-lg font-bold text-slate-100 mb-1">Student Not Found</h2>
-          <p className="text-slate-400 text-xs sm:text-sm mb-6">
-            The student record you are looking for does not exist or has been removed.
-          </p>
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">Student Not Found</h2>
+            <p className="text-slate-500 text-xs sm:text-sm mt-1">
+              The record you are looking for does not exist or has been deleted.
+            </p>
+          </div>
           <Link 
             to="/viewstudents" 
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-sm transition border border-slate-700 cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg text-sm transition-colors border border-slate-200 w-full"
           >
             <ArrowLeft className="w-4 h-4" /> Return to Directory
           </Link>
@@ -38,127 +46,169 @@ export default function StudentDetails({ students, onDelete }) {
 
   const NumberofDue = (fees) => {
     if (!student.dateofjoin) return 0;
-    const [date, month, year] = student.dateofjoin.split("-");
+    const parts = student.dateofjoin.split("-");
+    if (parts.length < 2) return 0;
+    const month = parts[1];
     const lst_mnt = parseInt(month, 10);
     const cur_mon = new Date().getMonth() + 1;
-  
     const lst_paid = Array.isArray(fees) ? fees[0]?.paid : fees?.paid;
     const due = cur_mon - lst_mnt;
-    return !lst_paid ? due + 1 : due;
+    return !lst_paid ? Math.max(0, due + 1) : Math.max(0, due);
   };
 
-  // Determine fee payment status
   const isFeesPaid = Boolean(Array.isArray(student.fees) ? student.fees[0]?.paid : student.fees?.paid);
   const duecount = NumberofDue(student.fees);
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 pt-10 md:flex items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
-      
-      {/* Background Glow */}
-      <div className="absolute top-0 right-0 w-64 sm:w-80 h-64 sm:h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="w-full max-w-xl space-y-4 sm:space-y-6 relative z-10 my-auto">
+    <div className="min-h-screen bg-slate-50 p-4 sm:p-6 md:p-8 text-slate-800">
+      <div className="max-w-6xl mx-auto space-y-6">
         
-        {/* Top Back Navigation Link */}
-        <Link 
-          to="/viewstudents" 
-          className="inline-flex items-center text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-colors group cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1.5 transition-transform group-hover:-translate-x-1" /> 
-          Back to Directory
-        </Link>
+        {/* --- Top Navigation --- */}
+        <div className="flex items-center justify-between">
+          <Link 
+            to="/viewstudents" 
+            className="inline-flex items-center text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1.5 transition-transform group-hover:-translate-x-1" /> 
+            Back to Directory
+          </Link>
+        </div>
 
-        {/* Main Glass Profile Card */}
-        <div className="bg-slate-900/60 backdrop-blur-xl p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl shadow-emerald-950/20 relative overflow-hidden">
-          
-          {/* Top Right Fees Paid Status Indicator (Pinned in position) */}
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 max-w-[45%] sm:max-w-none flex justify-end">
-            {isFeesPaid ? (
-              <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Fees Paid</span>
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-xs leading-tight text-right sm:text-left">
-                <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5 sm:mt-0" />
-                <span className="flex flex-col sm:flex-row sm:gap-1">
-                  <span>Fees Pending</span>
-                  <span className="opacity-80 sm:opacity-100">(Due: {duecount})</span>
+        {/* --- Header Profile Card --- */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 sm:p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-blue-50 border border-blue-100 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+              <User className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight">{student.student_name}</h1>
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-slate-100 text-slate-600 border border-slate-200">
+                  #{student.id}
                 </span>
-              </span>
-            )}
-          </div>
-
-          {/* Student Avatar & Basic Info */}
-          <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 relative z-10 pr-[48%] sm:pr-40">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-linear-to-tr from-emerald-600 via-teal-500 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-slate-950 font-extrabold text-2xl shadow-lg shadow-emerald-500/20 shrink-0">
-              <User className="w-6 h-6 sm:w-8 sm:h-8 text-slate-950" />
-            </div>
-            <div className="space-y-1 min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <h1 className="text-base sm:text-2xl font-bold text-white tracking-tight truncate">
-                  {student.student_name}
-                </h1>
-                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />
               </div>
-              <span className="inline-block text-[9px] sm:text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 sm:px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                ID #{student.id}
-              </span>
+              <p className="text-slate-500 text-xs sm:text-sm mt-0.5 uppercase tracking-wide font-medium">
+                {student.department || 'No Department Assigned'}
+              </p>
             </div>
           </div>
 
-          {/* Detailed Attribute Blocks */}
-          <div className="space-y-3 my-4 sm:my-6 pt-4 sm:pt-6 border-t border-slate-800/80">
-            
-            {/* Email / Date Card */}
-            <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-xl sm:rounded-2xl border border-slate-800/60 group">
-              <div className="p-2.5 bg-slate-900 rounded-xl text-emerald-400 border border-slate-800 group-hover:border-emerald-500/30 transition shrink-0">
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] sm:text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Date of Join</p>
-                <p className="text-slate-200 font-medium text-xs sm:text-sm mt-0.5 truncate">{dateFormat(student.dateofjoin)}</p>
-              </div>
-            </div>
-
-            {/* Department / Course Card */}
-            <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-slate-950/40 hover:bg-slate-950/60 transition rounded-xl sm:rounded-2xl border border-slate-800/60 group">
-              <div className="p-2.5 bg-slate-900 rounded-xl text-teal-400 border border-slate-800 group-hover:border-teal-500/30 transition shrink-0">
-                <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] sm:text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Department</p>
-                <p className="text-slate-200 font-medium text-xs sm:text-sm mt-0.5 uppercase tracking-wide truncate">
-                  {student.department}
-                </p>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Action Controls */}
-          <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 pt-4 border-t border-slate-800/80 mt-5 sm:mt-6">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <Link
               to={`/update/${student.id}`}
-              className="w-full sm:flex-1 py-2.5 sm:py-3 bg-slate-800/90 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold rounded-xl sm:rounded-2xl transition duration-200 border border-slate-700/80 text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              className="flex-1 sm:flex-initial px-4 py-2.5 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-medium rounded-lg transition duration-150 border border-slate-300 shadow-sm flex items-center justify-center gap-2 text-sm"
             >
-              <Edit className="w-4 h-4 text-amber-400" /> Edit Profile
+              <Edit className="w-4 h-4 text-slate-500" /> Edit Student
             </Link>
-
+            
             <button
               onClick={async () => {
                 const success = await onDelete(student.id);
-                if (success) {
-                  navigate("/viewstudents");
-                }
+                if (success) navigate("/viewstudents");
               }}
-              className="w-full sm:w-auto px-5 py-2.5 sm:py-3 bg-rose-950/30 hover:bg-rose-900/50 text-rose-300 font-semibold rounded-xl sm:rounded-2xl transition duration-200 border border-rose-800/40 text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              className="px-4 py-2.5 bg-red-50 hover:bg-red-100 active:bg-red-200 text-red-600 font-medium rounded-lg transition duration-150 border border-red-200 shadow-sm flex items-center justify-center gap-2 text-sm"
             >
-              <Trash2 className="w-4 h-4 text-rose-400" /> Delete
+              <Trash2 className="w-4 h-4 text-red-600" /> Delete
             </button>
+          </div>
+        </div>
+
+        {/* --- Main Information Grid --- */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Detailed Info Card */}
+          <div className="md:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="px-5 py-4 bg-slate-50 border-b border-slate-200">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Academic & Personal Details</h2>
+            </div>
+            
+            <div className="p-5 sm:p-6 divide-y divide-slate-100">
+              <div className="py-3 flex items-center justify-between first:pt-0">
+                <div className="flex items-center gap-3">
+                  <User className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm font-medium text-slate-500">Full Name</span>
+                </div>
+                <span className="text-sm font-semibold text-slate-900">{student.student_name}</span>
+              </div>
+
+              <div className="py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Hash className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm font-medium text-slate-500">Student ID</span>
+                </div>
+                <span className="text-xs font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-700 border border-slate-200">
+                  {student.id}
+                </span>
+              </div>
+
+              <div className="py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Building2 className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm font-medium text-slate-500">Department</span>
+                </div>
+                <span className="text-sm font-medium text-slate-900 uppercase">{student.department || 'N/A'}</span>
+              </div>
+
+              <div className="py-3 flex items-center justify-between last:pb-0">
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm font-medium text-slate-500">Date Joined</span>
+                </div>
+                <span className="text-xs font-mono bg-slate-100 px-2.5 py-0.5 rounded text-slate-700 border border-slate-200">
+                  {dateFormat(student.dateofjoin)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Fee Status Card */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+            <div className="px-5 py-4 bg-slate-50 border-b border-slate-200">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Financial Overview</h2>
+            </div>
+            
+            <div className="p-5 sm:p-6 space-y-6 flex-1 flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">Current Status</span>
+                <div className="mt-2">
+                  {isFeesPaid ? (
+                    <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold">Fees Up To Date</p>
+                        <p className="text-xs text-emerald-600 mt-0.5">No pending dues recorded</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800">
+                      <XCircle className="w-5 h-5 text-amber-600 shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold">Payment Pending</p>
+                        <p className="text-xs text-amber-600 mt-0.5">
+                          {duecount > 0 ? `${duecount} month(s) overdue` : 'Payment required'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 space-y-2">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-500">Overdue Months</span>
+                  <span className="font-semibold text-slate-900">{isFeesPaid ? 0 : duecount}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-500">Last Checked</span>
+                  <span className="font-mono text-slate-600">{format(new Date(), "dd-MM-yyyy")}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>
+
       </div>
     </div>
   );

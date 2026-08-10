@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Users, UserPlus, GraduationCap, Sparkles, Menu, X, LogOut } from 'lucide-react';
+import { Users, UserPlus, GraduationCap, Menu, X, LogOut } from 'lucide-react';
 
 export default function Navbar() {
   const location = useLocation();
@@ -10,41 +10,40 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
-    // Clear user auth session/tokens if stored in localStorage or sessionStorage
+    // Clear user auth session/tokens
     localStorage.removeItem('token'); 
     localStorage.removeItem('user');
     
     // Close mobile menu if open and navigate to login
     setIsOpen(false);
-    navigate('/login',{replace:true});
+    navigate('/login', { replace: true });
   };
 
   return (
-    <nav className="bg-slate-900/80 backdrop-blur-md text-white border-b border-slate-800/80 sticky top-0 z-50 transition-all duration-200">
+    <nav className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-xs">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         
         {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-linear-to-tr from-emerald-500 via-teal-500 to-cyan-500 rounded-xl flex items-center justify-center text-slate-950 shadow-md shadow-emerald-500/20 transition-transform group-hover:scale-105">
-            <GraduationCap className="w-6 h-6 text-slate-950" />
+        <Link to="/viewstudents" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
+            <GraduationCap className="w-5 h-5 text-white" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-lg text-white tracking-tight flex items-center gap-1.5">
+            <span className="font-bold text-base sm:text-lg text-slate-900 tracking-tight leading-tight">
               Tuition Center
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400 opacity-80" />
             </span>
-            <span className="text-[10px] text-slate-400 tracking-wider font-semibold uppercase">Management System</span>
+            <span className="text-[10px] text-slate-500 tracking-wider font-semibold uppercase">Management System</span>
           </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center gap-2 sm:gap-3">
+        <div className="hidden md:flex items-center gap-1.5 sm:gap-2">
           <Link
             to="/viewstudents"
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
               isActive('/viewstudents') 
-                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10' 
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent'
+                ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-200' 
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             <Users className="w-4 h-4" /> 
@@ -53,20 +52,23 @@ export default function Navbar() {
 
           <Link
             to="/add"
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
               isActive('/add') 
-                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10' 
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent'
+                ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-200' 
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             <UserPlus className="w-4 h-4" /> 
             <span>Add Student</span>
           </Link>
 
+          {/* Vertical Divider */}
+          <div className="h-5 w-px bg-slate-200 mx-1" />
+
           {/* Logout Button */}
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/30 transition-all duration-200 cursor-pointer"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 transition-all duration-150 cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
@@ -76,7 +78,7 @@ export default function Navbar() {
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 rounded-xl border border-slate-800 focus:outline-none transition-colors"
+          className="md:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg border border-slate-200 focus:outline-none transition-colors"
           aria-label="Toggle Navigation Menu"
         >
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -86,14 +88,14 @@ export default function Navbar() {
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <div className="md:hidden border-t border-slate-800/80 bg-slate-900/95 backdrop-blur-xl px-4 py-3 space-y-2">
+        <div className="md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-1.5 shadow-md">
           <Link
-            to="/"
+            to="/viewstudents"
             onClick={() => setIsOpen(false)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-              isActive('/') 
-                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10' 
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent'
+            className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+              isActive('/viewstudents') 
+                ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-200' 
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             <Users className="w-4 h-4" /> 
@@ -103,24 +105,26 @@ export default function Navbar() {
           <Link
             to="/add"
             onClick={() => setIsOpen(false)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+            className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
               isActive('/add') 
-                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10' 
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent'
+                ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-200' 
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             <UserPlus className="w-4 h-4" /> 
             <span>Add Student</span>
           </Link>
 
-          {/* Mobile Logout Button */}
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/30 transition-all duration-200 cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
-          </button>
+          <div className="pt-2 border-t border-slate-100">
+            {/* Mobile Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 transition-all duration-150 cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
       )}
     </nav>
