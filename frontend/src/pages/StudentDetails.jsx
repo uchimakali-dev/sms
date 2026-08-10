@@ -1,5 +1,5 @@
 import React from 'react';
-import { format, formatDate, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Trash2, Mail, Building2, Sparkles, User, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
 
@@ -7,12 +7,10 @@ export default function StudentDetails({ students, onDelete }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const student = students.find((s) => s.id === parseInt(id, 10));
-  console.log(students);
 
   const dateFormat = (d) => {
     if (!d) return "-";
-    const formated = format(parseISO(d), "dd-MM-yyyy");
-    return formated;
+    return format(parseISO(d), "dd-MM-yyyy");
   };
 
   // Not Found State
@@ -38,29 +36,20 @@ export default function StudentDetails({ students, onDelete }) {
     );
   }
 
-  const NumberofDue=(fees)=>{
-    const [date,month,year]=student.dateofjoin.split("-")
-    const lst_mnt=parseInt(month)
+  const NumberofDue = (fees) => {
+    if (!student.dateofjoin) return 0;
+    const [date, month, year] = student.dateofjoin.split("-");
+    const lst_mnt = parseInt(month, 10);
+    const cur_mon = new Date().getMonth() + 1;
+  
+    const lst_paid = Array.isArray(fees) ? fees[0]?.paid : fees?.paid;
+    const due = cur_mon - lst_mnt;
+    return !lst_paid ? due + 1 : due;
+  };
 
-    const cur_mon=new Date().getMonth()+1;
-  
-    const lst_paid=fees.paid
-    const due=(cur_mon-lst_mnt)
-    if ((!lst_paid)){
-      return due+1
-    }
-    else{
-      return due
-    }
-  }
-  
-
-  
-  // Determine fee payment status (Checks student.fees_paid boolean or string)
-  const isFeesPaid = Boolean(student.fees[0].paid);
-  const duecount=NumberofDue(student.fees)
-  
-  
+  // Determine fee payment status
+  const isFeesPaid = Boolean(Array.isArray(student.fees) ? student.fees[0]?.paid : student.fees?.paid);
+  const duecount = NumberofDue(student.fees);
 
   return (
     <div className="w-full min-h-screen bg-slate-950 pt-10 md:flex items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-x-hidden">
@@ -80,25 +69,25 @@ export default function StudentDetails({ students, onDelete }) {
         </Link>
 
         {/* Main Glass Profile Card */}
-        <div className="bg-slate-900/60 backdrop-blur-xl p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl shadow-emerald-950/20 relative overflow-hidden">
+        <div className="bg-slate-900/60 backdrop-blur-xl p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl shadow-emerald-950/20 relative overflow-hidden flex flex-col">
           
-          {/* Top Right Fees Paid Status Indicator */}
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+          {/* Responsive Fees Paid Status Indicator */}
+          <div className="mb-4 sm:mb-0 sm:absolute sm:top-6 sm:right-6 z-20 self-start sm:self-auto">
             {isFeesPaid ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 Fees Paid
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-xs">
-                <XCircle className="w-3.5 h-3.5 text-rose-400" />
-                 Fees Pending : Due count {duecount}
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-xs max-w-full flex-wrap">
+                <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                <span className="truncate">Fees Pending : Due count {duecount}</span>
               </span>
             )}
           </div>
 
           {/* Student Avatar & Basic Info */}
-          <div className="flex items-center gap-3.5 sm:gap-4 mb-6 sm:mb-8 relative z-10 pr-20 sm:pr-24">
+          <div className="flex items-center gap-3.5 sm:gap-4 mb-6 sm:mb-8 relative z-10 sm:pr-32">
             <div className="w-14 h-14 sm:w-16 sm:h-16 bg-linear-to-tr from-emerald-600 via-teal-500 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-slate-950 font-extrabold text-2xl shadow-lg shadow-emerald-500/20 shrink-0">
               <User className="w-7 h-7 sm:w-8 sm:h-8 text-slate-950" />
             </div>
