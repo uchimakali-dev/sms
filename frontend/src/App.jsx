@@ -111,6 +111,7 @@ export default function App() {
           <span className="text-3xl mb-3 block">⚠️</span>
           <h2 className="text-xl font-bold text-rose-300 mb-2">Connection Error</h2>
           <p className="text-sm text-rose-200/80">{error}</p>
+          <Link to={"/login"} className="bg-emerald-400 rounded-lg p-2">Login</Link>
           
         </div>
       </div>
